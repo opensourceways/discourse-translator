@@ -17,9 +17,14 @@ zh_CN:
     translator_aws_key_id: "AWS 密钥 ID"
     translator_aws_secret_access: "AWS 密码访问密钥"
     translator_aws_iam_role: "AWS IAM 角色"
+    translator_huawei_project_name: "华为云文本翻译服务区域"
+    translator_huawei_project_id: "华为云文本翻译服务区域ID"
+    translator_debug_info: "是否输出详细的调试日志"
   translator:
     failed: "翻译器无法翻译此语言。"
     not_supported: "翻译器不支持此语言。"
     too_long: "帖子过长，翻译器无法翻译。"
     microsoft:
+      missing_token: "翻译器无法检索有效令牌。"
+    huawei:
       missing_token: "翻译器无法检索有效令牌。"

@@ -18,3 +18,5 @@ en:
 
     microsoft:
       missing_token: "The translator was unable to retrieve a valid token."
+    huawei:
+      missing_token: "The translator was unable to retrieve a valid token."
