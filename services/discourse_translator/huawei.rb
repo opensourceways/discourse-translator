@@ -53,10 +53,10 @@ module DiscourseTranslator
                         password: {
                             user: {
                                 domain: {
-                                    name: ENV[SENSITIVE_DOMAIN_NAME]
+                                    name: ENV["SENSITIVE_DOMAIN_NAME"]
                                 },
-                                name: ENV[SENSITIVE_NAME],
-                                password: ENV[SENSITIVE_PASSWORD]
+                                name: ENV["SENSITIVE_NAME"],
+                                password: ENV["SENSITIVE_PASSWORD"]
                             }
                         }
                     }, 
