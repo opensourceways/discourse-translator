@@ -139,7 +139,6 @@ after_initialize do
             I18n.locale
           ]
       end
-      true
     end
   end
 

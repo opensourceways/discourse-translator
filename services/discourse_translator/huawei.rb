@@ -5,8 +5,9 @@ require 'json'
 
 module DiscourseTranslator
     class Huawei < Base
-      TRANSLATE_URI = "https://nlp-ext.:project_name.myhuaweicloud.com/v1/:project_id/machine-translation/text-translation"
-      ISSUE_TOKEN_URI = "https://iam.:project_name.myhuaweicloud.com/v3/auth/tokens"
+      TRANSLATE_URI = "https://nlp-ext.:project_name.myhuaweicloud.com/v1/:project_id/machine-translation/text-translation".freeze
+      DETECT_URI = "https://nlp-ext.:project_name.myhuaweicloud.com/v1/:project_id/machine-translation/language-detection".freeze
+      ISSUE_TOKEN_URI = "https://iam.:project_name.myhuaweicloud.com/v3/auth/tokens".freeze
     
       LENGTH_LIMIT = 2000
 
@@ -28,7 +29,7 @@ module DiscourseTranslator
             en_US: 'en',
             vi: 'vi',
             zh_CN: 'zh',
-            zh_TW: 'zh-tw',
+            zh_TW: 'zh',
         }
     
       def self.access_token_key
@@ -87,27 +88,50 @@ module DiscourseTranslator
       end
 
       def self.detect(post)
-        "huawei-translator"
+        post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
+          res = result("#{DETECT_URI}".sub(':project_name', SiteSetting.translator_huawei_project_name).sub(':project_id', SiteSetting.translator_huawei_project_id),
+                "POST".downcase.to_sym,
+                { 'X-Auth-Token' => access_token, 'Content-Type' => 'application/json;charset=utf8' },
+                {
+                text: post.raw.truncate(LENGTH_LIMIT, omission: nil)
+                }
+                )
+          if res == 777
+            return
+          else
+            res['detected_language']
+          end
+        end
       end
     
       def self.translate(post)
+        detected_lang = detect(post)
+
+        if detected_lang.nil?
+          raise TranslatorError.new(I18n.t("translator.huawei.fail_1"))
+        end
+
+        if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
+          !SUPPORTED_LANG_MAPPING.values.include?(detected_lang.to_s)
+          raise TranslatorError.new(I18n.t("translator.failed"))
+        end
+
         translated_text = from_custom_fields(post) do
           parsed_html = Nokogiri::HTML(post.cooked)
-          translated_html = traverse(parsed_html)
+          translated_html = traverse(parsed_html, detected_lang)
           if translated_html
             translated_html.inner_html
           else
-            'Translation fails. :('
+            raise TranslatorError.new(I18n.t("translator.huawei.fail_2"))
           end
         end
         
-        
         log("original text: #{post.cooked}")
         log("translated text: #{translated_text}")
-        ['Auto', translated_text]
+        [detected_lang, translated_text]
       end
 
-      def self.traverse(html)
+      def self.traverse(html, detected_lang)
         text_node = []
         html.traverse do |node|
           if node.name == 'text' and !node.content.blank? and node.content != "\n"
@@ -140,7 +164,7 @@ module DiscourseTranslator
 
         translated_strs = []
         translate_strs.each do |str|
-          res = request_translation(str)
+          res = request_translation(str, detected_lang)
           if res == 999
             translated_strs << str
           elsif res != 777
@@ -202,16 +226,21 @@ module DiscourseTranslator
         ans
       end
 
-      def self.request_translation(text)
+      def self.request_translation(text, detected_lang)
         res = result("#{TRANSLATE_URI}".sub(':project_name', SiteSetting.translator_huawei_project_name).sub(':project_id', SiteSetting.translator_huawei_project_id),
                 "POST".downcase.to_sym,
                 { 'X-Auth-Token' => access_token, 'Content-Type' => 'application/json;charset=utf8' },
                 {
                 text: text,
-                from: 'auto',
+                from: detected_lang,
                 to: SUPPORTED_LANG_MAPPING[I18n.locale]
                 }
                 )
+        if res != 999 or res != 777
+          res["translated_text"]
+        else
+          res
+        end
       end
 
       def self.result(url, method, headers, body)
@@ -236,7 +265,7 @@ module DiscourseTranslator
             777
           end
         else
-          body["translated_text"]
+          body
         end
       end
 
