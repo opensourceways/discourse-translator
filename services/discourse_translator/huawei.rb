@@ -145,7 +145,11 @@ module DiscourseTranslator
         pre_str = "<p>"
         post_str = "</p>\n"
         text_node.each do |n|
-          tmp = translate_str + pre_str + n.content.gsub("\n", "<br>") + post_str
+          if ' '.in? n.content
+            tmp = translate_str + pre_str + n.content.gsub("\n", "<br>") + post_str
+          else
+            tmp = translate_str + pre_str + n.content.gsub("\n", "<br>") + ' ' + post_str
+          end
           if tmp.length > LENGTH_LIMIT   
             translate_strs << translate_str
             translate_str = pre_str + n.content.gsub("\n", "<br>") + post_str

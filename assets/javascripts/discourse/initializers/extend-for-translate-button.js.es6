@@ -42,7 +42,7 @@ function initializeTranslation(api) {
     }
 
     const language = dec.attrs.detected_lang;
-    const translator = siteSettings.translator;
+    const translator = 'forum';
 
     return dec.h("div.post-translation", [
       dec.h("hr"),
