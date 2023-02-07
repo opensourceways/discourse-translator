@@ -11,7 +11,7 @@ module DiscourseTranslator
     
       LENGTH_LIMIT = 2000
 
-    # Hash which maps Discourse's locale code to Huawei Translate's locale code found in
+    # Hash which maps Discourse's locale code to HuaweiCloud Translate's locale code found in
     # https://support.huaweicloud.com/api-nlp/nlp_03_0024.html
       SUPPORTED_LANG_MAPPING = {
             ar: 'ar',
@@ -79,7 +79,7 @@ module DiscourseTranslator
           elsif response.body.blank?
             raise TranslatorError.new(I18n.t("translator.huaweicloud.missing_token"))
           else
-            # The possible response isn't well documented in Huawei's API so
+            # The possible response isn't well documented in HuaweiCloud's API so
             # it might break from time to time.
             error = JSON.parse(response.body)["error"]
             raise TranslatorError.new("#{error['code']}: #{error['message']}")
@@ -108,7 +108,7 @@ module DiscourseTranslator
         detected_lang = detect(post)
 
         if detected_lang.nil?
-          raise TranslatorError.new(I18n.t("translator.huaweicloud.fail_1"))
+          raise TranslatorError.new(I18n.t("translator.huaweicloud.no_lang"))
         end
 
         if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
@@ -122,7 +122,7 @@ module DiscourseTranslator
           if translated_html
             translated_html.inner_html
           else
-            raise TranslatorError.new(I18n.t("translator.huaweicloud.fail_2"))
+            raise TranslatorError.new(I18n.t("translator.huaweicloud.fail"))
           end
         end
         

@@ -20,5 +20,5 @@ en:
       missing_token: "The translator was unable to retrieve a valid token."
     huaweicloud:
       missing_token: "The translator was unable to retrieve a valid token."
-      fail_1: "Translatation error: 1."
-      fail_2: "Translatation error: 2."
+      no_lang: "Translatation error, no language detected."
+      fail: "Translatation error"

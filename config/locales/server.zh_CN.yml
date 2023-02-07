@@ -28,5 +28,5 @@ zh_CN:
       missing_token: "翻译器无法检索有效令牌。"
     huaweicloud:
       missing_token: "翻译器无法检索有效令牌。"
-      fail_1: "翻译器出现错误, 错误类型: 1。"
-      fail_2: "翻译器出现错误, 错误类型: 2。"
+      no_lang: "翻译器出现错误, 未检测到语言种类。"
+      fail: "翻译器出现错误。"
