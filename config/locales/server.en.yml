@@ -18,3 +18,7 @@ en:
 
     microsoft:
       missing_token: "The translator was unable to retrieve a valid token."
+    huaweicloud:
+      missing_token: "The translator was unable to retrieve a valid token."
+      no_lang: "Translatation error, no language detected."
+      fail: "Translatation error"

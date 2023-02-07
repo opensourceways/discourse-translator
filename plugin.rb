@@ -13,6 +13,8 @@ register_asset "stylesheets/common/post.scss"
 
 after_initialize do
   module ::DiscourseTranslator
+    class TranslatorError < ::StandardError; end
+
     PLUGIN_NAME = "discourse_translator".freeze
     DETECTED_LANG_CUSTOM_FIELD = "post_detected_lang".freeze
     TRANSLATED_CUSTOM_FIELD = "translated_text".freeze
@@ -25,6 +27,8 @@ after_initialize do
              "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/amazon"
     autoload :Yandex,
              "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/yandex"
+    autoload :HuaweiCloud,
+             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/huaweicloud"
 
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME

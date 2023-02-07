@@ -11,6 +11,7 @@ plugins:
       - Google
       - Amazon
       - Yandex
+      - HuaweiCloud
   translator_azure_subscription_key:
     default: ''
   translator_azure_region:
@@ -80,5 +81,11 @@ plugins:
     default: ''
   translator_yandex_api_key:
     default: ''
+  translator_huaweicloud_project_name:
+    default: ''
+  translator_huaweicloud_project_id:
+    default: ''
+  translator_debug_info:
+    default: false
   max_translations_per_minute:
     default: 3
