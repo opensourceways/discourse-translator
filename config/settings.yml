@@ -81,9 +81,9 @@ plugins:
     default: ''
   translator_yandex_api_key:
     default: ''
-  translator_huawei_project_name:
+  translator_huawei_cloud_project_name:
     default: ''
-  translator_huawei_project_id:
+  translator_huawei_cloud_project_id:
     default: ''
   translator_debug_info:
     default: false

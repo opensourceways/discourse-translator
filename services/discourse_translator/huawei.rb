@@ -45,7 +45,7 @@ module DiscourseTranslator
           connection = Faraday.new do |f| 
               f.adapter FinalDestination::FaradayAdapter
           end
-          url = "#{DiscourseTranslator::Huawei::ISSUE_TOKEN_URI}".sub(':project_name', SiteSetting.translator_huawei_project_name)
+          url = "#{DiscourseTranslator::Huawei::ISSUE_TOKEN_URI}".sub(':project_name', SiteSetting.translator_huawei_cloud_project_name)
           method = "POST".downcase.to_sym
           body = { 
                 auth: { 
@@ -63,8 +63,8 @@ module DiscourseTranslator
                     }, 
                     scope: {
                         project: {
-                            id: SiteSetting.translator_huawei_project_id,
-                            name: SiteSetting.translator_huawei_project_name
+                            id: SiteSetting.translator_huawei_cloud_project_id,
+                            name: SiteSetting.translator_huawei_cloud_project_name
                         }
                     }
                 }
@@ -89,7 +89,7 @@ module DiscourseTranslator
 
       def self.detect(post)
         post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-          res = result("#{DETECT_URI}".sub(':project_name', SiteSetting.translator_huawei_project_name).sub(':project_id', SiteSetting.translator_huawei_project_id),
+          res = result("#{DETECT_URI}".sub(':project_name', SiteSetting.translator_huawei_cloud_project_name).sub(':project_id', SiteSetting.translator_huawei_cloud_project_id),
                 "POST".downcase.to_sym,
                 { 'X-Auth-Token' => access_token, 'Content-Type' => 'application/json;charset=utf8' },
                 {
@@ -231,7 +231,7 @@ module DiscourseTranslator
       end
 
       def self.request_translation(text, detected_lang)
-        res = result("#{TRANSLATE_URI}".sub(':project_name', SiteSetting.translator_huawei_project_name).sub(':project_id', SiteSetting.translator_huawei_project_id),
+        res = result("#{TRANSLATE_URI}".sub(':project_name', SiteSetting.translator_huawei_cloud_project_name).sub(':project_id', SiteSetting.translator_huawei_cloud_project_id),
                 "POST".downcase.to_sym,
                 { 'X-Auth-Token' => access_token, 'Content-Type' => 'application/json;charset=utf8' },
                 {
