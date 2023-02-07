@@ -4,7 +4,7 @@ require_relative 'base'
 require 'json'
 
 module DiscourseTranslator
-    class Huawei < Base
+    class HuaweiCloud < Base
       TRANSLATE_URI = "https://nlp-ext.:project_name.myhuaweicloud.com/v1/:project_id/machine-translation/text-translation".freeze
       DETECT_URI = "https://nlp-ext.:project_name.myhuaweicloud.com/v1/:project_id/machine-translation/language-detection".freeze
       ISSUE_TOKEN_URI = "https://iam.:project_name.myhuaweicloud.com/v3/auth/tokens".freeze
@@ -33,7 +33,7 @@ module DiscourseTranslator
         }
     
       def self.access_token_key
-        "huawei-translator"
+        "huaweicloud-translator"
       end
   
       def self.access_token
@@ -45,7 +45,7 @@ module DiscourseTranslator
           connection = Faraday.new do |f| 
               f.adapter FinalDestination::FaradayAdapter
           end
-          url = "#{DiscourseTranslator::Huawei::ISSUE_TOKEN_URI}".sub(':project_name', SiteSetting.translator_huawei_cloud_project_name)
+          url = "#{DiscourseTranslator::HuaweiCloud::ISSUE_TOKEN_URI}".sub(':project_name', SiteSetting.translator_huaweicloud_project_name)
           method = "POST".downcase.to_sym
           body = { 
                 auth: { 
@@ -63,8 +63,8 @@ module DiscourseTranslator
                     }, 
                     scope: {
                         project: {
-                            id: SiteSetting.translator_huawei_cloud_project_id,
-                            name: SiteSetting.translator_huawei_cloud_project_name
+                            id: SiteSetting.translator_huaweicloud_project_id,
+                            name: SiteSetting.translator_huaweicloud_project_name
                         }
                     }
                 }
@@ -77,7 +77,7 @@ module DiscourseTranslator
             Discourse.redis.setex(cache_key, 24.hours.to_i, response_body['x-subject-token'])
             response_body['x-subject-token']
           elsif response.body.blank?
-            raise TranslatorError.new(I18n.t("translator.huawei.missing_token"))
+            raise TranslatorError.new(I18n.t("translator.huaweicloud.missing_token"))
           else
             # The possible response isn't well documented in Huawei's API so
             # it might break from time to time.
@@ -89,7 +89,7 @@ module DiscourseTranslator
 
       def self.detect(post)
         post.custom_fields[DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD] ||= begin
-          res = result("#{DETECT_URI}".sub(':project_name', SiteSetting.translator_huawei_cloud_project_name).sub(':project_id', SiteSetting.translator_huawei_cloud_project_id),
+          res = result("#{DETECT_URI}".sub(':project_name', SiteSetting.translator_huaweicloud_project_name).sub(':project_id', SiteSetting.translator_huaweicloud_project_id),
                 "POST".downcase.to_sym,
                 { 'X-Auth-Token' => access_token, 'Content-Type' => 'application/json;charset=utf8' },
                 {
@@ -108,7 +108,7 @@ module DiscourseTranslator
         detected_lang = detect(post)
 
         if detected_lang.nil?
-          raise TranslatorError.new(I18n.t("translator.huawei.fail_1"))
+          raise TranslatorError.new(I18n.t("translator.huaweicloud.fail_1"))
         end
 
         if !SUPPORTED_LANG_MAPPING.keys.include?(detected_lang.to_sym) &&
@@ -122,7 +122,7 @@ module DiscourseTranslator
           if translated_html
             translated_html.inner_html
           else
-            raise TranslatorError.new(I18n.t("translator.huawei.fail_2"))
+            raise TranslatorError.new(I18n.t("translator.huaweicloud.fail_2"))
           end
         end
         
@@ -231,7 +231,7 @@ module DiscourseTranslator
       end
 
       def self.request_translation(text, detected_lang)
-        res = result("#{TRANSLATE_URI}".sub(':project_name', SiteSetting.translator_huawei_cloud_project_name).sub(':project_id', SiteSetting.translator_huawei_cloud_project_id),
+        res = result("#{TRANSLATE_URI}".sub(':project_name', SiteSetting.translator_huaweicloud_project_name).sub(':project_id', SiteSetting.translator_huaweicloud_project_id),
                 "POST".downcase.to_sym,
                 { 'X-Auth-Token' => access_token, 'Content-Type' => 'application/json;charset=utf8' },
                 {

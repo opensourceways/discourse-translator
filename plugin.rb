@@ -27,8 +27,8 @@ after_initialize do
              "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/amazon"
     autoload :Yandex,
              "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/yandex"
-    autoload :Huawei,
-             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/huawei"
+    autoload :HuaweiCloud,
+             "#{Rails.root}/plugins/discourse-translator/services/discourse_translator/huaweicloud"
 
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME
