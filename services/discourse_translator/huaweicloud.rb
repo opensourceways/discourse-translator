@@ -96,7 +96,7 @@ module DiscourseTranslator
                 text: post.raw.truncate(LENGTH_LIMIT, omission: nil)
                 }
                 )
-          if res == 777
+          if res == 777 or res.nil?
             return
           else
             res['detected_language']
@@ -217,9 +217,9 @@ module DiscourseTranslator
       def self.retract_out_char(str)
         paras = str.split("\n")
         for para in paras do
-          para.sub!("<p>", '')
+          para.gsub!("<p>", '')
           para.reverse!
-          para.sub!(">p/<", '')
+          para.gsub!(">p/<", '')
           para.reverse!
         end
 
@@ -240,7 +240,7 @@ module DiscourseTranslator
                 to: SUPPORTED_LANG_MAPPING[I18n.locale]
                 }
                 )
-        if res != 999 or res != 777
+        if res != 999 and res != 777
           res["translated_text"]
         else
           res
