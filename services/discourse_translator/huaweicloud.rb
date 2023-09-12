@@ -8,7 +8,7 @@ module DiscourseTranslator
       TRANSLATE_URI = "https://nlp-ext.:project_name.myhuaweicloud.com/v1/:project_id/machine-translation/text-translation".freeze
       DETECT_URI = "https://nlp-ext.:project_name.myhuaweicloud.com/v1/:project_id/machine-translation/language-detection".freeze
       ISSUE_TOKEN_URI = "https://iam.:project_name.myhuaweicloud.com/v3/auth/tokens".freeze
-    
+
       LENGTH_LIMIT = 2000
 
     # Hash which maps Discourse's locale code to HuaweiCloud Translate's locale code found in
@@ -31,24 +31,24 @@ module DiscourseTranslator
             zh_CN: 'zh',
             zh_TW: 'zh',
         }
-    
+
       def self.access_token_key
         "huaweicloud-translator"
       end
-  
+
       def self.access_token
         existing_token = Discourse.redis.get(cache_key)
-  
+
         if existing_token
           existing_token
         else
-          connection = Faraday.new do |f| 
+          connection = Faraday.new do |f|
               f.adapter FinalDestination::FaradayAdapter
           end
           url = "#{DiscourseTranslator::HuaweiCloud::ISSUE_TOKEN_URI}".sub(':project_name', SiteSetting.translator_huaweicloud_project_name)
           method = "POST".downcase.to_sym
-          body = { 
-                auth: { 
+          body = {
+                auth: {
                     identity: {
                         methods: ["password"],
                         password: {
@@ -60,7 +60,7 @@ module DiscourseTranslator
                                 password: ENV["SENSITIVE_PASSWORD"]
                             }
                         }
-                    }, 
+                    },
                     scope: {
                         project: {
                             id: SiteSetting.translator_huaweicloud_project_id,
@@ -72,7 +72,7 @@ module DiscourseTranslator
           body = JSON.parse(body).to_s.gsub('=>', ':')
           headers = { 'Content-Type' => 'application/json;charset=utf8' }
           response = connection.run_request(method, url, body, headers)
-  
+
           if response.status == 201 && (response_body = response.headers).present?
             Discourse.redis.setex(cache_key, 24.hours.to_i, response_body['x-subject-token'])
             response_body['x-subject-token']
@@ -103,7 +103,7 @@ module DiscourseTranslator
           end
         end
       end
-    
+
       def self.translate(post)
         detected_lang = detect(post)
 
@@ -125,7 +125,7 @@ module DiscourseTranslator
             raise TranslatorError.new(I18n.t("translator.huaweicloud.fail"))
           end
         end
-        
+
         log("original text: #{post.cooked}")
         log("translated text: #{translated_text}")
         [detected_lang, translated_text]
@@ -150,7 +150,7 @@ module DiscourseTranslator
           else
             tmp = translate_str + pre_str + n.content.gsub("\n", "<br>") + ' ' + post_str
           end
-          if tmp.length > LENGTH_LIMIT   
+          if tmp.length > LENGTH_LIMIT
             translate_strs << translate_str
             translate_str = pre_str + n.content.gsub("\n", "<br>") + post_str
           else
@@ -248,19 +248,19 @@ module DiscourseTranslator
       end
 
       def self.result(url, method, headers, body)
-        connection = Faraday.new do |f| 
+        connection = Faraday.new do |f|
             f.adapter FinalDestination::FaradayAdapter
         end
 
         body = JSON.parse body.to_json
         response = connection.run_request(method, url, body.to_s.gsub('=>', ':'), headers)
-  
+
         body = nil
         begin
           body = JSON.parse(response.body)
         rescue JSON::ParserError
         end
-  
+
         if response.status != 200
           log("res: #{response.body}")
           if "Language or Scene is not supported. ".in? body["error_msg"]

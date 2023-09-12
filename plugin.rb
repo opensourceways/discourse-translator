@@ -128,6 +128,8 @@ after_initialize do
     def can_translate
       return false if !SiteSetting.translator_enabled
 
+      return false if object.raw.empty?
+
       detected_lang = post_custom_fields[::DiscourseTranslator::DETECTED_LANG_CUSTOM_FIELD]
 
       if !detected_lang
