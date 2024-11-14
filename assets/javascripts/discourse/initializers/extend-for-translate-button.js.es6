@@ -8,9 +8,11 @@ function translatePost(post) {
     type: "POST",
     data: { post_id: post.get("id") },
   }).then(function (res) {
+    // 检查res.detected_lang的值，如果是"en"，则更改为"English"
+    var detectedLang = res.detected_lang === "en" ? "English" : "简体中文";
     post.setProperties({
       translated_text: res.translation,
-      detected_lang: res.detected_lang,
+      detected_lang: detectedLang,
     });
   });
 }
