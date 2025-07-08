@@ -22,6 +22,9 @@ zh_CN:
     translator_azure_custom_subdomain: "如果将虚拟网络或防火墙用于 Azure 认知服务，则为必需。注意：仅输入自定义子域，而不是完整的自定义端点。"
     restrict_translation_by_group: "只有允许的群组才能翻译"
     restrict_translation_by_poster_group: "仅允许翻译允许的群组中用户发布的帖子。如果为空，则允许翻译所有用户的帖子。"
+    translator_huaweicloud_project_name: "华为云文本翻译服务区域"
+    translator_huaweicloud_project_id: "华为云文本翻译服务区域ID"
+    translator_debug_info: "是否输出详细的调试日志"
   translator:
     not_supported: "翻译器不支持此语言。"
     too_long: "帖子过长，翻译器无法翻译。"
@@ -34,6 +37,10 @@ zh_CN:
     discourse_ai:
       not_installed: "您需要安装 discourse-ai 插件才能使用此功能。"
       ai_helper_required: '您需要<a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">配置 AI 助手</a>才能使用此功能。'
+    huaweicloud:
+      missing_token: "翻译器无法检索有效令牌。"
+      no_lang: "翻译器出现错误, 未检测到语言种类。"
+      fail: "翻译器出现错误。"
   not_in_group:
     user_not_in_group: "您不属于允许翻译的群组。"
     poster_not_in_group: "帖子不是由允许的群组中的用户发布的。"
