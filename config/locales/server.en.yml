@@ -33,6 +33,11 @@ en:
       missing_token: "The translator was unable to retrieve a valid token."
       missing_key: "No Azure Subscription Key provided."
 
+    huaweicloud:
+      missing_token: "The HuaweiCloud translator was unable to retrieve a valid token."
+      no_lang: "Translatation error, no language detected."
+      fail: "Translatation error"
+
     discourse_ai:
       not_installed: "You need to install the discourse-ai plugin to use this feature."
       ai_helper_required: 'You need to <a href="%{base_url}/admin/site_settings/category/all_results?filter=plugin%3Adiscourse-ai%20helper">configure the ai helper</a> to use this feature.'
